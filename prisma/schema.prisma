@@ -1,0 +1,66 @@
+// Prisma schema for News Aggregator with Crowdsourced Bias Insights
+// This schema should be manually replicated in Supabase SQL editor as well
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String   // hashed password (if not using Supabase Auth directly)
+  name        String?
+  createdAt   DateTime @default(now())
+  comments    Comment[]
+  votes       Vote[]
+}
+
+model Article {
+  id            String   @id @default(uuid())
+  url           String   @unique
+  title         String
+  content       String
+  publishedAt   DateTime
+  source        String
+  storyCluster  StoryCluster? @relation(fields: [storyClusterId], references: [id])
+  storyClusterId String?
+  createdAt     DateTime @default(now())
+}
+
+model StoryCluster {
+  id        String    @id @default(uuid())
+  title     String
+  summary   String?
+  imageUrl  String?   // URL for the cluster's image
+  articles  Article[]
+  createdAt DateTime  @default(now())
+  comments  Comment[]
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  story       StoryCluster @relation(fields: [storyId], references: [id])
+  storyId     String
+  content     String
+  createdAt   DateTime @default(now())
+  votes       Vote[]
+  consensusScore Float? // Calculated by consensus engine
+  clusterLabel   String? // For behavioral clustering
+}
+
+model Vote {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  comment    Comment  @relation(fields: [commentId], references: [id])
+  commentId  String
+  value      Int      // 1 = Helpful/Agree, -1 = Not Helpful/Disagree
+  createdAt  DateTime @default(now())
+} 

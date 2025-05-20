@@ -1,0 +1,108 @@
+# Cursor Project Rules (Next.js + Shadcn UI)
+
+## 1. Stack & Structure
+
+* **Framework**: Next.js (App Router, TypeScript)
+* **Styling**: Tailwind CSS + Shadcn UI
+* **Component Usage**: Always use Shadcn UI components via `npx shadcn-ui@latest add [component]`.
+
+  * Never create a manual copy of a component.
+  * Customize downloaded components via the shared component library only if needed.
+
+## 2. Frontend Guidelines
+
+### File Structure
+
+* Use **Next.js App Directory structure**
+* Organize by **feature domain** (`auth/`, `dashboard/`, `files/`, etc.)
+* Keep co-located components and hooks within each feature directory
+* Before creating any new file, search the project directory to ensure no existing file with the same name exists and confirm the correct parent folder to avoid duplicates.
+* After implementing each prompt, keep a status and implementation update as a markdown file in @planning_documentation_v0 folder. 
+
+
+
+### Component Conventions
+
+* **Naming**:
+
+  * Components: `PascalCase`
+  * Files: `kebab-case`
+  * Variables/functions: `camelCase`
+  * Constants: `UPPER_SNAKE_CASE`
+* Use server/client file suffixes if needed (e.g., `page.tsx`, `page.client.tsx`)
+
+### Styling
+
+* TailwindCSS is default; no inline styles
+* Theme support via Shadcn’s theming system
+* Persist light/dark mode using context and local storage
+
+### Components
+
+* Prefer **pure functional components** with typed props
+* Always use **TypeScript** interfaces or discriminated unions
+* Don't manually recreate Shadcn components
+
+### State & Data
+
+* Use React Query for data fetching and caching
+* Manage global state with React Context only when necessary
+* Keep local state minimal and scoped
+
+### UX & Validation
+
+* Show loading and error states for every async operation
+* Validate file inputs client-side (type, size) before upload
+
+## 3. API & Backend (Inside Next.js)
+
+* All APIs live under `/app/api/`
+* Use RESTful structure (`/api/auth`, `/api/files`, etc.)
+* Use `zod` for schema validation in request handlers
+* Return typed JSON responses with clear error handling
+
+## 4. Supabase Integration
+
+* Use Supabase for:
+
+  * Auth (email/password)
+  * Storage (S3 bucket for file uploads)
+  * Postgres DB
+* Always verify JWT tokens on protected routes
+* Use Supabase client in server actions when possible
+
+## 5. Error Handling & Logging
+
+* Show user-friendly messages in UI
+* Use error boundaries for critical sections
+* Log errors with context and metadata to external tool (e.g. Sentry)
+
+## 6. Testing & CI
+
+* Add unit and integration tests for business logic
+* Lint, typecheck, and test on every PR
+* Prettier + ESLint with auto-fix on save
+
+## 7. Git & PR Workflow
+
+* Branches: `feature/`, `bugfix/`, `chore/`
+* Use **Conventional Commits**
+* Keep PRs <300 LOC and tightly scoped
+* Add screenshots/descriptions for any visual/UI changes
+
+## 8. Performance & DX
+
+* Lazy load non-critical components
+* Paginate large lists; avoid infinite fetch loops
+* Use Skeletons or loading states during async operations
+
+## 9. Secrets & Config
+
+* Store secrets in `.env.local`, never commit them
+* Validate env values at runtime using Zod or equivalent
+
+## 10. Change Management
+
+* Respect existing code style unless explicitly refactoring
+* Propose minimal, focused changes aligned with context
+* Review related parts of the system before making changes
